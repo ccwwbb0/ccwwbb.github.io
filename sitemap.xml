@@ -37,6 +37,24 @@
     <priority>0.6</priority>
   </url>
   
+  <url>
+    <loc>http://example.com/3a05595cbf71/</loc>
+    
+    <lastmod>2022-03-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/90926066c1e8/</loc>
+    
+    <lastmod>2022-03-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
   <url>
     <loc>http://example.com/</loc>
@@ -48,6 +66,13 @@
   
   <url>
     <loc>http://example.com/tags/Node/</loc>
+    <lastmod>2023-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/Code/</loc>
     <lastmod>2023-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
