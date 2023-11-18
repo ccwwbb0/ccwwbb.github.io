@@ -1,3 +1,4 @@
+workflow:
 name: Update gh-pages
 
 on:
