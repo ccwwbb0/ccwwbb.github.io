@@ -19,23 +19,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="ccwwbb">
-<meta property="og:url" content="http://example.com/index.html">
+    <meta name="description" content="Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用@符号，后跟一个函数或类，用来实现对类行为的改变。 装饰器的用法类装饰器类装饰器是一个函数，它可以被附加到类构造函数上，用来监视、修改或替换类定义。 123456789function logClass(target: any) &amp;#123;    con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ts高级功能&quot;装饰器&quot;">
+<meta property="og:url" content="http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">
 <meta property="og:site_name" content="ccwwbb">
+<meta property="og:description" content="Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用@符号，后跟一个函数或类，用来实现对类行为的改变。 装饰器的用法类装饰器类装饰器是一个函数，它可以被附加到类构造函数上，用来监视、修改或替换类定义。 123456789function logClass(target: any) &amp;#123;    con">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-18T04:00:49.000Z">
+<meta property="article:modified_time" content="2022-04-18T04:00:49.000Z">
 <meta property="article:author" content="ccwwbb">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/","path":"Ts装饰器/","title":"Ts高级功能\"装饰器\""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>ccwwbb</title>
+<title>Ts高级功能"装饰器" | ccwwbb</title>
   
 
 
@@ -66,7 +70,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">ccwwbb</h1>
+      <p class="site-title">ccwwbb</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">罗曼·罗兰曾说：“世界上只有一种真正的英雄主义，那就是在认清生活的真相后，仍然热爱生活。”</p>
@@ -89,7 +93,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -102,6 +106,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E7%94%A8%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">装饰器的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">类装饰器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">方法装饰器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">属性装饰器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">装饰器的原理</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -131,16 +136,17 @@
 
     </div>
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -154,13 +160,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="name" content="Ts高级功能"装饰器" | ccwwbb">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/" class="post-title-link" itemprop="url">Ts高级功能"装饰器"</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Ts高级功能"装饰器"
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -174,6 +180,13 @@
     </span>
 
   
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
 </div>
 
         </div>
@@ -182,8 +195,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-          <p>Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用<code>@</code>符号，后跟一个函数或类，用来实现对类行为的改变。</p>
+    <div class="post-body" itemprop="articleBody"><p>Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用<code>@</code>符号，后跟一个函数或类，用来实现对类行为的改变。</p>
 <h2 id="装饰器的用法"><a href="#装饰器的用法" class="headerlink" title="装饰器的用法"></a>装饰器的用法</h2><h3 id="类装饰器"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器</h3><p>类装饰器是一个函数，它可以被附加到类构造函数上，用来监视、修改或替换类定义。</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logClass</span>(<span class="params">target: <span class="built_in">any</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(target);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@logClass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;I am a person&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -197,7 +209,6 @@
 <p>装饰器原理涉及元编程的概念，通过装饰器可以动态修改或扩展类的行为。在应用装饰器时，装饰器工厂函数被调用并返回一个表达式函数，该函数在运行时被调用，从而实现对类行为的改变。</p>
 <p>Typescript装饰器极大地提高了代码的可读性和维护性，同时也为开发者提供了更大的灵活性。装饰器是Typescript中一个非常强大且重要的特性，可以帮助开发者更好地管理和组织代码。</p>
 
-      
     </div>
 
     
@@ -205,11 +216,13 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
     </footer>
   </article>
 </div>
+
 
 
 

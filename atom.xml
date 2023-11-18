@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ccwwbb</title>
+  
+  <subtitle>罗曼·罗兰曾说：“世界上只有一种真正的英雄主义，那就是在认清生活的真相后，仍然热爱生活。”</subtitle>
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2022-04-18T04:00:49.000Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>ccwwbb</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Ts高级功能&quot;装饰器&quot;</title>
+    <link href="http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/"/>
+    <id>http://example.com/Ts%E8%A3%85%E9%A5%B0%E5%99%A8/</id>
+    <published>2022-04-18T04:00:49.000Z</published>
+    <updated>2022-04-18T04:00:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用<code>@</code>符号，后跟一个函数或类，用来实现对类行为的改变。</p><h2 id="装饰器的用法"><a href="#装饰器的用法" class="headerlink" title="装饰器的用法"></a>装饰器的用法</h2><h3 id="类装饰器"><a href="#类装饰器" class="headerlink" title="类装饰器"></a>类装饰器</h3><p>类装饰器是一个函数，它可以被附加到类构造函数上，用来监视、修改或替换类定义。</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logClass</span>(<span class="params">target: <span class="built_in">any</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(target);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@logClass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;I am a person&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="方法装饰器"><a href="#方法装饰器" class="headerlink" title="方法装饰器"></a>方法装饰器</h3><p>方法装饰器应用于一个类的方法属性描述符上，可以用来监视、修改或替换方法定义。</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logMethod</span>(<span class="params">target: <span class="built_in">any</span>, key: <span class="built_in">string</span>, descriptor: PropertyDescriptor</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(key + <span class="string">&#x27; was called&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Calculator</span> &#123;</span><br><span class="line">    <span class="meta">@logMethod</span></span><br><span class="line">    <span class="title function_">square</span>(<span class="params">n: <span class="built_in">number</span></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> n * n;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="属性装饰器"><a href="#属性装饰器" class="headerlink" title="属性装饰器"></a>属性装饰器</h3><p>属性装饰器表达式在运行时被调用，可以用来监视、修改或替换类的属性定义。</p><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">logProperty</span>(<span class="params">target: <span class="built_in">any</span>, key: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(key + <span class="string">&#x27; was called&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">    <span class="meta">@logProperty</span></span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="装饰器的原理"><a href="#装饰器的原理" class="headerlink" title="装饰器的原理"></a>装饰器的原理</h2><p>Typescript装饰器是基于ECMAScript 6的一个特性，它通过修改类的行为实现了细粒度的控制和修改。装饰器在编译期被调用，并通过装饰器工厂返回一个表达式函数，然后被应用到类、方法或属性上面。</p><p>装饰器原理涉及元编程的概念，通过装饰器可以动态修改或扩展类的行为。在应用装饰器时，装饰器工厂函数被调用并返回一个表达式函数，该函数在运行时被调用，从而实现对类行为的改变。</p><p>Typescript装饰器极大地提高了代码的可读性和维护性，同时也为开发者提供了更大的灵活性。装饰器是Typescript中一个非常强大且重要的特性，可以帮助开发者更好地管理和组织代码。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Typescript装饰器是一种特殊类型的声明，可以附加到类、方法、访问符、属性或参数上，通过装饰器可以对这些元素进行各种操作和修改。装饰器使用&lt;code&gt;@&lt;/code&gt;符号，后跟一个函数或类，用来实现对类行为的改变。&lt;/p&gt;
+&lt;h2 id=&quot;装饰器的用法&quot;&gt;&lt;a hre</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
