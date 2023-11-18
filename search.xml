@@ -4,6 +4,44 @@
   
     
     <entry>
+      <title>怎么理解js中函数是一等公民</title>
+      <link href="/c08ec216fed2/"/>
+      <url>/c08ec216fed2/</url>
+      
+        <content type="html"><![CDATA[<p>将函数视为“一等公民”（First-Class Citizens）意味着在JavaScript中，函数被视为与其他数据类型相同，可以像变量、对象和其他数据类型一样进行操作和使用。这种特性在编程语言中通常被称为“一等函数”或“函数作为一等公民”。以下是理解JavaScript中函数作为一等公民的几个关键点：</p><ol><li><p><strong>函数可以被赋值给变量</strong>：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> add = <span class="keyword">function</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><p>在这个例子中，一个函数袂被赋值给了变量<code>add</code>，从而可以像操作其他变量一样操作函数。</p></li><li><p><strong>函数可以作为参数传递</strong>：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">doSomething</span>(<span class="params">func</span>) &#123;</span><br><span class="line">  <span class="comment">// 在这里调用传递进来的函数</span></span><br><span class="line">  <span class="title function_">func</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">doSomething</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Doing something...&#x27;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure><p>可以将函数直接传递给另一个函数，并在其中执行。</p></li><li><p><strong>函数可以作为返回值</strong>：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">createGreeter</span>(<span class="params">greeting</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params">name</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;greeting&#125;</span>, <span class="subst">$&#123;name&#125;</span>!`</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> greetInEnglish = <span class="title function_">createGreeter</span>(<span class="string">&#x27;Hello&#x27;</span>);</span><br><span class="line"><span class="title function_">greetInEnglish</span>(<span class="string">&#x27;John&#x27;</span>);</span><br></pre></td></tr></table></figure><p>在这个例子中，<code>createGreeter</code>函数返回另一个函数，这个返回的函数在调用时打印相应的问候语，闭包就是这么实现的。</p></li><li><p><strong>函数可以存储在数据结构中</strong>：</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> functions = [<span class="keyword">function</span>(<span class="params">a, b</span>) &#123; <span class="keyword">return</span> a + b; &#125;, <span class="keyword">function</span>(<span class="params">a, b</span>) &#123; <span class="keyword">return</span> a - b; &#125;];</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(functions[<span class="number">0</span>](<span class="number">3</span>, <span class="number">4</span>)); <span class="comment">// 输出 7</span></span><br></pre></td></tr></table></figure><p>在这个例子中，函数存储在数组中，并可以像其他数据一样进行访问和使用，当然这种用法比较少，因为不符合我们的编程习惯</p></li></ol><p>JavaScript中的函数是一等公民意味着函数在语言中具有与其他数据类型相同的地位，可以自由地赋值、传递、返回和存储。这种特性使得JavaScript可以以更灵活的方式编写代码，并支持函数式编程的范式。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Node </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>js的作用域，以及js为什么需要绑定this</title>
+      <link href="/f2ae2a403256/"/>
+      <url>/f2ae2a403256/</url>
+      
+        <content type="html"><![CDATA[<p>JavaScript有两种主要的作用域：全局作用域和局部作用域。全局作用域是代码中任何地方都可以访问的范围，而局部作用域是指仅在特定代码块内部可见的范围。JavaScript在设计上需要绑定<code>this</code>关键字是因为其函数作用域和对象导向的特性。</p><h3 id="作用域-Scope"><a href="#作用域-Scope" class="headerlink" title="作用域(Scope)"></a>作用域(Scope)</h3><ul><li><p>**全局作用域(Global Scope)**：全局作用域中声明的变量和函数可以被整个代码访问。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> globalVariable = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">globalFunction</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="comment">// 可以访问globalVariable</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(globalVariable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>**局部作用域(Local Scope)**：局部作用域中声明的变量和函数只能在其声明的代码块内部访问。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">localFunction</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> localVariable = <span class="number">20</span>;</span><br><span class="line">  <span class="comment">// 只能在localFunction内部访问localVariable</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(localVariable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li></ul><p>JavaScript的作用域是通过函数来创建的，每个函数都有自己的作用域，这样可以隔离变量，避免命名冲突和数据混乱。</p><h3 id="绑定this"><a href="#绑定this" class="headerlink" title="绑定this"></a>绑定this</h3><p>JavaScript中的<code>this</code>关键字在不同的情况下指向不同的值，它可以指向调用它的对象，也可以通过显示绑定来指向指定的对象。绑定<code>this</code>的主要原因是 JavaScript 是一门多范式的语言，可以同时支持面向对象编程、函数式编程等多种范式。在不同的编程范式中，对<code>this</code>的使用和指向有不同的约定和规则。</p><ul><li><p><strong>面向对象编程</strong>：在使用类、对象和原型继承构建对象时，需要通过<code>this</code>关键字来引用对象的属性和方法。</p></li><li><p><strong>函数式编程</strong>：在函数式编程范式中，需要让函数能够在不同的上下文中正确地执行，因此需要对<code>this</code>进行正确的绑定，以确保它在函数内部指向预期的值。</p></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Node </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Nest&quot;拦截器&quot;,&quot;验证器&quot;,&quot;中间件&quot;的区别</title>
       <link href="/29f70be0c3d2/"/>
       <url>/29f70be0c3d2/</url>
