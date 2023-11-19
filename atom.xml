@@ -18,8 +18,8 @@
   
   <entry>
     <title>怎么理解js中函数是一等公民</title>
-    <link href="http://example.com/c08ec216fed2/"/>
-    <id>http://example.com/c08ec216fed2/</id>
+    <link href="http://example.com/2023/04/c08ec216fed2/"/>
+    <id>http://example.com/2023/04/c08ec216fed2/</id>
     <published>2023-04-12T11:00:49.000Z</published>
     <updated>2023-04-12T11:00:49.000Z</updated>
     
@@ -39,9 +39,56 @@
   </entry>
   
   <entry>
+    <title>Golang内存逃逸分析</title>
+    <link href="http://example.com/2023/02/5d929965c0ba/"/>
+    <id>http://example.com/2023/02/5d929965c0ba/</id>
+    <published>2023-02-08T13:00:49.000Z</published>
+    <updated>2023-02-08T13:00:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>当编写代码时，Golang 编译器会进行内存逃逸分析，以确定是否将变量分配在堆上。</p><ol><li><strong>函数返回了指针类型</strong>：引发的逃逸分析：<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">Name <span class="type">string</span></span><br><span class="line">Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createUser</span><span class="params">(name <span class="type">string</span>, age <span class="type">int</span>)</span></span> *User &#123;</span><br><span class="line">u := User&#123;Name: name, Age: age&#125;</span><br><span class="line"><span class="keyword">return</span> &amp;u <span class="comment">// 返回局部变量的指针</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">name := <span class="string">&quot;Alice&quot;</span></span><br><span class="line">age := <span class="number">30</span></span><br><span class="line">user := createUser(name, age)</span><br><span class="line">_ = user</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li></ol><p>在这个示例中，<code>createUser</code> 函数返回了指向局部变量 <code>u</code> 的指针。由于返回的指针可能在 <code>createUser</code> 函数返回后仍然被引用，因此编译器会进行内存逃逸分析，将 <code>u</code> 分配在堆上，以避免在 <code>createUser</code> 函数返回后造成使用已释放栈内存的情况。</p><ol start="2"><li><strong>闭包捕获局部变量的指针</strong>：在闭包中捕获局部变量的指针可能导致内存逃逸。示例代码如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">age := <span class="number">30</span></span><br><span class="line">add := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line"><span class="keyword">return</span> age + <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line">_ = add</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>在这个示例中，闭包<code>add</code>捕获了局部变量<code>age</code>的指针，这会导致<code>age</code>逃逸到堆上。</p><ol start="3"><li><strong>将指针传递到函数或方法中</strong>：当将局部变量的指针传递给函数或方法，并且函数或方法可能会持有该指针时，这也会导致内存逃逸。示例代码如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">Name <span class="type">string</span></span><br><span class="line">Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">updateUser</span><span class="params">(u *User)</span></span> &#123;</span><br><span class="line">u.Age++</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">user := User&#123;Name: <span class="string">&quot;Alice&quot;</span>, Age: <span class="number">30</span>&#125;</span><br><span class="line">updateUser(&amp;user)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>在这个示例中，<code>updateUser</code> 函数接收了 <code>User</code> 类型的指针，这有可能导致逃逸。</p><ol start="3"><li><strong>接口类型的逃逸</strong>：使用接口类型时，编译器可能无法确定实际的类型，导致变量逃逸。示例代码如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">Name <span class="type">string</span></span><br><span class="line">Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"><span class="keyword">var</span> x <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">u := User&#123;Name: <span class="string">&quot;Bob&quot;</span>, Age: <span class="number">25</span>&#125;</span><br><span class="line">x = u</span><br><span class="line">_ = x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>在这个示例中，变量 <code>x</code> 的类型为接口，可能会导致内存逃逸的发生。</p><p>总结： 为了查看内存逃逸分析的结果，你可以使用 <code>-gcflags=&#39;-m&#39;</code> 参数来编译该示例代码：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build -gcflags=<span class="string">&#x27;-m&#x27;</span> your_file_name.go</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;当编写代码时，Golang 编译器会进行内存逃逸分析，以确定是否将变量分配在堆上。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;函数返回了指针类型&lt;/strong&gt;：引发的逃逸分析：&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td cla</summary>
+      
+    
+    
+    
+    
+    <category term="Golang" scheme="http://example.com/tags/Golang/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Node和Golang使用rpc互相通信</title>
+    <link href="http://example.com/2023/01/bb940bc2e721/"/>
+    <id>http://example.com/2023/01/bb940bc2e721/</id>
+    <published>2023-01-05T05:30:09.000Z</published>
+    <updated>2023-01-05T05:30:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>RPC通信是和语言无关的，简单做个例子试一下</p><h3 id="Node-js中作为RPC-Server，Golang中作为RPC-Client"><a href="#Node-js中作为RPC-Server，Golang中作为RPC-Client" class="headerlink" title="Node.js中作为RPC Server，Golang中作为RPC Client"></a>Node.js中作为RPC Server，Golang中作为RPC Client</h3><h4 id="Node-js中作为RPC-Server"><a href="#Node-js中作为RPC-Server" class="headerlink" title="Node.js中作为RPC Server"></a>Node.js中作为RPC Server</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> zerorpc = <span class="built_in">require</span>(<span class="string">&quot;zerorpc&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> server = <span class="keyword">new</span> zerorpc.<span class="title class_">Server</span>(&#123;</span><br><span class="line">   <span class="attr">greet</span>: <span class="keyword">function</span>(<span class="params">name, reply</span>) &#123;</span><br><span class="line">       <span class="title function_">reply</span>(<span class="literal">null</span>, <span class="string">&quot;Hello, &quot;</span> + name);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">bind</span>(<span class="string">&quot;tcp://0.0.0.0:4242&quot;</span>);</span><br></pre></td></tr></table></figure><h4 id="在Golang中作为RPC-Client"><a href="#在Golang中作为RPC-Client" class="headerlink" title="在Golang中作为RPC Client"></a>在Golang中作为RPC Client</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;log&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc/jsonrpc&quot;</span></span><br><span class="line">   <span class="string">&quot;net&quot;</span></span><br><span class="line">   <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> &#123;</span><br><span class="line">   Name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   client, err := net.Dial(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;127.0.0.1:4242&quot;</span>)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;dialing:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">defer</span> client.Close()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> reply <span class="type">string</span></span><br><span class="line">   args := &amp;Args&#123;<span class="string">&quot;World&quot;</span>&#125;</span><br><span class="line">   c := jsonrpc.NewClient(client)</span><br><span class="line">   err = c.Call(<span class="string">&quot;greet&quot;</span>, args, &amp;reply)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;arith error:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line">   fmt.Println(reply)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="Golang中作为RPC-Server，Node-js中作为RPC-Client"><a href="#Golang中作为RPC-Server，Node-js中作为RPC-Client" class="headerlink" title="Golang中作为RPC Server，Node.js中作为RPC Client"></a>Golang中作为RPC Server，Node.js中作为RPC Client</h3><h4 id="Golang中作为RPC-Server"><a href="#Golang中作为RPC-Server" class="headerlink" title="Golang中作为RPC Server"></a>Golang中作为RPC Server</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;net&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc&quot;</span></span><br><span class="line">   <span class="string">&quot;log&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc/jsonrpc&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> GreetService <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *GreetService)</span></span> Greet(name <span class="type">string</span>, reply *<span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">   *reply = <span class="string">&quot;Hello, &quot;</span> + name</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   greet := <span class="built_in">new</span>(GreetService)</span><br><span class="line">   rpc.Register(greet)</span><br><span class="line">   listener, err := net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:1234&quot;</span>)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;listen error:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">       conn, err := listener.Accept()</span><br><span class="line">       <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">           <span class="keyword">continue</span></span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">go</span> rpc.ServeCodec(jsonrpc.NewServerCodec(conn))</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="Node-js中作为RPC-Client"><a href="#Node-js中作为RPC-Client" class="headerlink" title="Node.js中作为RPC Client"></a>Node.js中作为RPC Client</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> zerorpc = <span class="built_in">require</span>(<span class="string">&quot;zerorpc&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> client = <span class="keyword">new</span> zerorpc.<span class="title class_">Client</span>();</span><br><span class="line">client.<span class="title function_">connect</span>(<span class="string">&quot;tcp://127.0.0.1:1234&quot;</span>);</span><br><span class="line"></span><br><span class="line">client.<span class="title function_">invoke</span>(<span class="string">&quot;greet&quot;</span>, <span class="string">&quot;World&quot;</span>, <span class="keyword">function</span> (<span class="params">error, res, more</span>) &#123;</span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(res);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;RPC通信是和语言无关的，简单做个例子试一下&lt;/p&gt;
+&lt;h3 id=&quot;Node-js中作为RPC-Server，Golang中作为RPC-Client&quot;&gt;&lt;a href=&quot;#Node-js中作为RPC-Server，Golang中作为RPC-Client&quot; class=&quot;h</summary>
+      
+    
+    
+    
+    
+    <category term="Node" scheme="http://example.com/tags/Node/"/>
+    
+  </entry>
+  
+  <entry>
     <title>js的作用域，以及js为什么需要绑定this</title>
-    <link href="http://example.com/f2ae2a403256/"/>
-    <id>http://example.com/f2ae2a403256/</id>
+    <link href="http://example.com/2022/12/f2ae2a403256/"/>
+    <id>http://example.com/2022/12/f2ae2a403256/</id>
     <published>2022-12-04T06:20:19.000Z</published>
     <updated>2022-12-04T06:20:19.000Z</updated>
     
@@ -61,9 +108,81 @@
   </entry>
   
   <entry>
+    <title>最简单的分布式锁：Redis</title>
+    <link href="http://example.com/2022/11/300722230009/"/>
+    <id>http://example.com/2022/11/300722230009/</id>
+    <published>2022-11-12T06:20:19.000Z</published>
+    <updated>2022-11-12T06:20:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>微服务架构下，经常会碰到多个API对一个资源的访问，这个时候传统的锁就不管用了，分布式锁就应运而生。<br>在Redis中实现分布式锁通常使用SET命令和DEL命令来实现锁的设置和自动释放</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"><span class="string">&quot;fmt&quot;</span></span><br><span class="line"><span class="string">&quot;github.com/go-redis/redis/v8&quot;</span></span><br><span class="line"><span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"><span class="comment">// 创建一个Redis客户端实例</span></span><br><span class="line">client := redis.NewClient(&amp;redis.Options&#123;</span><br><span class="line">Addr:     <span class="string">&quot;localhost:6379&quot;</span>,</span><br><span class="line">Password: <span class="string">&quot;&quot;</span>, <span class="comment">// 没有设置密码</span></span><br><span class="line">DB:       <span class="number">0</span>,  <span class="comment">// 使用默认数据库</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置锁的键名</span></span><br><span class="line">lockKey := <span class="string">&quot;my_lock&quot;</span></span><br><span class="line"><span class="comment">// 设置锁的过期时间，防止锁无法释放</span></span><br><span class="line">lockTTL := <span class="number">10</span> * time.Second</span><br><span class="line"></span><br><span class="line"><span class="comment">// 尝试获取锁</span></span><br><span class="line">lockAcquired, err := client.SetNX(ctx, lockKey, <span class="string">&quot;locked&quot;</span>, lockTTL).Result()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"><span class="comment">// 处理错误</span></span><br><span class="line"><span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> lockAcquired &#123;</span><br><span class="line"><span class="comment">// 成功获取锁，执行业务逻辑</span></span><br><span class="line">fmt.Println(<span class="string">&quot;Lock acquired, running the critical section&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟业务执行</span></span><br><span class="line">time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 释放锁</span></span><br><span class="line">_, err := client.Del(ctx, lockKey).Result()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"><span class="comment">// 处理错误</span></span><br><span class="line"><span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(<span class="string">&quot;Lock released&quot;</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">// 未能获取锁</span></span><br><span class="line">fmt.Println(<span class="string">&quot;Failed to acquire lock&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>以上代码尝试获取一个名为<code>my_lock</code>的锁。我们使用<code>SETNX</code>命令来设置锁，其原子性保证了只有一个客户端能获得锁。锁设置了10秒的过期时间，避免锁无法释放。如果成功获得了锁，则执行一些关键逻辑，最后再使用<code>DEL</code>命令来释放锁。如果未能获得锁，则处理相应逻辑。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;微服务架构下，经常会碰到多个API对一个资源的访问，这个时候传统的锁就不管用了，分布式锁就应运而生。&lt;br&gt;在Redis中实现分布式锁通常使用SET命令和DEL命令来实现锁的设置和自动释放&lt;/p&gt;
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;t</summary>
+      
+    
+    
+    
+    
+    <category term="Go" scheme="http://example.com/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Express的应用和服务分离</title>
+    <link href="http://example.com/2022/10/56df050d5428/"/>
+    <id>http://example.com/2022/10/56df050d5428/</id>
+    <published>2022-10-04T06:20:19.000Z</published>
+    <updated>2022-10-04T06:20:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在一个 Express 应用中，将应用程序和服务器逻辑分离开来通常是个好主意。具体来说，可以将 Express 应用本身（包括路由、中间件配置等）和服务器逻辑（创建服务器实例、侦听端口等）分开。</p><p>这种分离可以通过以下方法实现：</p><ol><li><p><strong>应用程序</strong>：</p><ul><li>应用程序逻辑可以包括 Express 应用的配置、路由设置、中间件配置等内容。这些逻辑通常保存在主应用文件（例如 <code>app.js</code>）中。应用程序处理请求、调用相应的路由处理程序以及执行其他应用级逻辑。</li></ul></li><li><p><strong>服务器逻辑</strong>：</p><ul><li>服务器逻辑涉及创建 HTTP 服务器实例、指定监听端口等。将这些逻辑放在单独的文件中，通常命名为 <code>server.js</code> 或 <code>www</code> 是一种常见做法。这个文件负责创建服务器实例并将 Express 应用绑定到该服务器上。</li></ul></li><li><p><strong>路由和控制器</strong>：</p><ul><li>将路由逻辑和控制器函数分离到单独的文件或目录中，以保持代码的模块化和可维护性。</li></ul></li><li><p><strong>服务层和模型</strong>：</p><ul><li>对于复杂的应用逻辑和数据操作，考虑将业务逻辑抽象为服务层。服务层负责处理复杂的业务逻辑，并将数据库操作等业务逻辑从控制器中分离出来。</li></ul></li></ol><p>API声明应该在 app.js 文件里面：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var app = express();</span><br><span class="line">app.use(bodyParser.json());</span><br><span class="line">app.use(&quot;/api/events&quot;, events.API);</span><br><span class="line">app.use(&quot;/api/forms&quot;, forms);</span><br></pre></td></tr></table></figure><p>服务器网络声明，应该在 &#x2F;bin&#x2F;www 文件里面</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Get port from environment and store in Express.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">var port = normalizePort(process.env.PORT || &#x27;3000&#x27;);</span><br><span class="line">app.set(&#x27;port&#x27;, port);</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Create HTTP server.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">var server = http.createServer(app);</span><br></pre></td></tr></table></figure><p>使用超快的流行的测试包在线测试你的代码</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">const app = express();</span><br><span class="line"></span><br><span class="line">app.get(&#x27;/user&#x27;, function(req, res) &#123;</span><br><span class="line">  res.status(200).json(&#123; name: &#x27;tobi&#x27; &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">request(app)</span><br><span class="line">  .get(&#x27;/user&#x27;)</span><br><span class="line">  .expect(&#x27;Content-Type&#x27;, /json/)</span><br><span class="line">  .expect(&#x27;Content-Length&#x27;, &#x27;15&#x27;)</span><br><span class="line">  .expect(200)</span><br><span class="line">  .end(function(err, res) &#123;</span><br><span class="line">    if (err) throw err;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在一个 Express 应用中，将应用程序和服务器逻辑分离开来通常是个好主意。具体来说，可以将 Express 应用本身（包括路由、中间件配置等）和服务器逻辑（创建服务器实例、侦听端口等）分开。&lt;/p&gt;
+&lt;p&gt;这种分离可以通过以下方法实现：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;</summary>
+      
+    
+    
+    
+    
+    <category term="Node" scheme="http://example.com/tags/Node/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Golang多协程同步的三种方法</title>
+    <link href="http://example.com/2022/08/b2e5d1d4883a/"/>
+    <id>http://example.com/2022/08/b2e5d1d4883a/</id>
+    <published>2022-08-21T14:12:03.000Z</published>
+    <updated>2022-08-21T14:12:03.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在Golang中，可以使用以下三种常见方法来实现多协程的同步：</p><ol><li><strong>使用 WaitGroup</strong>:<br>使用 sync 包中的 WaitGroup 类型可以方便地实现对多个协程的同步管理。使用 Add 方法增加待等待的协程数量，使用 Done 方法标记协程执行完毕，最后调用 Wait 方法来等待所有协程执行完毕。示例如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;sync&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">            <span class="keyword">defer</span> wg.Done()</span><br><span class="line">            fmt.Println(<span class="string">&quot;Goroutine&quot;</span>, i, <span class="string">&quot;done&quot;</span>)</span><br><span class="line">        &#125;(i)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">    fmt.Println(<span class="string">&quot;All goroutines done&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ol start="2"><li><strong>使用通道（Channel）</strong>:<br>通过通道可以在协程之间进行通信和同步。通过在通道上进行读写操作，可以控制协程的执行顺序。示例如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(done <span class="keyword">chan</span> <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">    fmt.Print(<span class="string">&quot;Working...&quot;</span>)</span><br><span class="line">    <span class="comment">// 模拟工作</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;Done&quot;</span>)</span><br><span class="line">    done &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">bool</span>)</span><br><span class="line">    <span class="keyword">go</span> worker(done)</span><br><span class="line">    &lt;-done <span class="comment">// 阻塞直到接收到协程的完成通知</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;All done&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ol start="3"><li><strong>使用 Mutex（互斥锁）</strong>:<br>通过 sync 包中的 Mutex 类型可以实现对共享资源的安全访问，从而保证多个协程之间的同步。示例如下：</li></ol><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    counter = <span class="number">0</span></span><br><span class="line">    lock    sync.Mutex</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">increment</span><span class="params">(wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">    lock.Lock()</span><br><span class="line">    <span class="keyword">defer</span> lock.Unlock()</span><br><span class="line">    counter++</span><br><span class="line">    wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> increment(&amp;wg)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">    fmt.Println(<span class="string">&quot;Counter:&quot;</span>, counter)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;在Golang中，可以使用以下三种常见方法来实现多协程的同步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;使用 WaitGroup&lt;/strong&gt;:&lt;br&gt;使用 sync 包中的 WaitGroup 类型可以方便地实现对多个协程的同步管理。使用 Add 方法增加待等待的协</summary>
+      
+    
+    
+    
+    
+    <category term="Golang" scheme="http://example.com/tags/Golang/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Nest&quot;拦截器&quot;,&quot;验证器&quot;,&quot;中间件&quot;的区别</title>
-    <link href="http://example.com/29f70be0c3d2/"/>
-    <id>http://example.com/29f70be0c3d2/</id>
+    <link href="http://example.com/2022/06/29f70be0c3d2/"/>
+    <id>http://example.com/2022/06/29f70be0c3d2/</id>
     <published>2022-06-18T07:30:29.000Z</published>
     <updated>2022-06-18T07:30:29.000Z</updated>
     
@@ -88,8 +207,8 @@
   
   <entry>
     <title>什么是接口的幂等性和可重入？</title>
-    <link href="http://example.com/bcd2f1b074f4/"/>
-    <id>http://example.com/bcd2f1b074f4/</id>
+    <link href="http://example.com/2022/05/bcd2f1b074f4/"/>
+    <id>http://example.com/2022/05/bcd2f1b074f4/</id>
     <published>2022-05-07T12:10:19.000Z</published>
     <updated>2022-07-07T12:10:19.000Z</updated>
     
@@ -112,8 +231,8 @@
   
   <entry>
     <title>Ts高级功能&quot;装饰器&quot;</title>
-    <link href="http://example.com/fcdd2c3b9807/"/>
-    <id>http://example.com/fcdd2c3b9807/</id>
+    <link href="http://example.com/2022/04/fcdd2c3b9807/"/>
+    <id>http://example.com/2022/04/fcdd2c3b9807/</id>
     <published>2022-04-18T04:00:49.000Z</published>
     <updated>2022-04-18T04:00:49.000Z</updated>
     
@@ -135,8 +254,8 @@
   
   <entry>
     <title>面向对象和面向过程的区别？</title>
-    <link href="http://example.com/90926066c1e8/"/>
-    <id>http://example.com/90926066c1e8/</id>
+    <link href="http://example.com/2021/12/90926066c1e8/"/>
+    <id>http://example.com/2021/12/90926066c1e8/</id>
     <published>2021-12-02T11:00:49.000Z</published>
     <updated>2022-03-02T11:00:49.000Z</updated>
     
@@ -158,8 +277,8 @@
   
   <entry>
     <title>函数式和响应式的区别？</title>
-    <link href="http://example.com/3a05595cbf71/"/>
-    <id>http://example.com/3a05595cbf71/</id>
+    <link href="http://example.com/2021/11/3a05595cbf71/"/>
+    <id>http://example.com/2021/11/3a05595cbf71/</id>
     <published>2021-11-08T12:10:19.000Z</published>
     <updated>2022-03-07T12:10:19.000Z</updated>
     
@@ -181,8 +300,8 @@
   
   <entry>
     <title>读《代码整洁之道》学编程小技巧</title>
-    <link href="http://example.com/05b038ec9e98/"/>
-    <id>http://example.com/05b038ec9e98/</id>
+    <link href="http://example.com/2021/07/05b038ec9e98/"/>
+    <id>http://example.com/2021/07/05b038ec9e98/</id>
     <published>2021-07-02T15:10:03.000Z</published>
     <updated>2021-10-02T01:20:10.000Z</updated>
     

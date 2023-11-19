@@ -114,12 +114,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -145,7 +145,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/c08ec216fed2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/c08ec216fed2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -163,7 +163,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/c08ec216fed2/" class="post-title-link" itemprop="url">怎么理解js中函数是一等公民</a>
+          <a href="/2023/04/c08ec216fed2/" class="post-title-link" itemprop="url">怎么理解js中函数是一等公民</a>
         </h2>
 
         <div class="post-meta-container">
@@ -233,7 +233,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/f2ae2a403256/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/5d929965c0ba/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -251,7 +251,176 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/f2ae2a403256/" class="post-title-link" itemprop="url">js的作用域，以及js为什么需要绑定this</a>
+          <a href="/2023/02/5d929965c0ba/" class="post-title-link" itemprop="url">Golang内存逃逸分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-08 21:00:49" itemprop="dateCreated datePublished" datetime="2023-02-08T21:00:49+08:00">2023-02-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>当编写代码时，Golang 编译器会进行内存逃逸分析，以确定是否将变量分配在堆上。</p>
+<ol>
+<li><strong>函数返回了指针类型</strong>：引发的逃逸分析：<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createUser</span><span class="params">(name <span class="type">string</span>, age <span class="type">int</span>)</span></span> *User &#123;</span><br><span class="line">	u := User&#123;Name: name, Age: age&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;u <span class="comment">// 返回局部变量的指针</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	name := <span class="string">&quot;Alice&quot;</span></span><br><span class="line">	age := <span class="number">30</span></span><br><span class="line">	user := createUser(name, age)</span><br><span class="line">	_ = user</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>在这个示例中，<code>createUser</code> 函数返回了指向局部变量 <code>u</code> 的指针。由于返回的指针可能在 <code>createUser</code> 函数返回后仍然被引用，因此编译器会进行内存逃逸分析，将 <code>u</code> 分配在堆上，以避免在 <code>createUser</code> 函数返回后造成使用已释放栈内存的情况。</p>
+<ol start="2">
+<li><strong>闭包捕获局部变量的指针</strong>：在闭包中捕获局部变量的指针可能导致内存逃逸。示例代码如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	age := <span class="number">30</span></span><br><span class="line">	add := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> age + <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	_ = add</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，闭包<code>add</code>捕获了局部变量<code>age</code>的指针，这会导致<code>age</code>逃逸到堆上。</p>
+<ol start="3">
+<li><strong>将指针传递到函数或方法中</strong>：当将局部变量的指针传递给函数或方法，并且函数或方法可能会持有该指针时，这也会导致内存逃逸。示例代码如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">updateUser</span><span class="params">(u *User)</span></span> &#123;</span><br><span class="line">	u.Age++</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	user := User&#123;Name: <span class="string">&quot;Alice&quot;</span>, Age: <span class="number">30</span>&#125;</span><br><span class="line">	updateUser(&amp;user)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，<code>updateUser</code> 函数接收了 <code>User</code> 类型的指针，这有可能导致逃逸。</p>
+<ol start="3">
+<li><strong>接口类型的逃逸</strong>：使用接口类型时，编译器可能无法确定实际的类型，导致变量逃逸。示例代码如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name <span class="type">string</span></span><br><span class="line">	Age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> x <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	u := User&#123;Name: <span class="string">&quot;Bob&quot;</span>, Age: <span class="number">25</span>&#125;</span><br><span class="line">	x = u</span><br><span class="line">	_ = x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，变量 <code>x</code> 的类型为接口，可能会导致内存逃逸的发生。</p>
+<p>总结： 为了查看内存逃逸分析的结果，你可以使用 <code>-gcflags=&#39;-m&#39;</code> 参数来编译该示例代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build -gcflags=<span class="string">&#x27;-m&#x27;</span> your_file_name.go</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/bb940bc2e721/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ccwwbb">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/bb940bc2e721/" class="post-title-link" itemprop="url">Node和Golang使用rpc互相通信</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-05 13:30:09" itemprop="dateCreated datePublished" datetime="2023-01-05T13:30:09+08:00">2023-01-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>RPC通信是和语言无关的，简单做个例子试一下</p>
+<h3 id="Node-js中作为RPC-Server，Golang中作为RPC-Client"><a href="#Node-js中作为RPC-Server，Golang中作为RPC-Client" class="headerlink" title="Node.js中作为RPC Server，Golang中作为RPC Client"></a>Node.js中作为RPC Server，Golang中作为RPC Client</h3><h4 id="Node-js中作为RPC-Server"><a href="#Node-js中作为RPC-Server" class="headerlink" title="Node.js中作为RPC Server"></a>Node.js中作为RPC Server</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> zerorpc = <span class="built_in">require</span>(<span class="string">&quot;zerorpc&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> server = <span class="keyword">new</span> zerorpc.<span class="title class_">Server</span>(&#123;</span><br><span class="line">   <span class="attr">greet</span>: <span class="keyword">function</span>(<span class="params">name, reply</span>) &#123;</span><br><span class="line">       <span class="title function_">reply</span>(<span class="literal">null</span>, <span class="string">&quot;Hello, &quot;</span> + name);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.<span class="title function_">bind</span>(<span class="string">&quot;tcp://0.0.0.0:4242&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="在Golang中作为RPC-Client"><a href="#在Golang中作为RPC-Client" class="headerlink" title="在Golang中作为RPC Client"></a>在Golang中作为RPC Client</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;log&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc/jsonrpc&quot;</span></span><br><span class="line">   <span class="string">&quot;net&quot;</span></span><br><span class="line">   <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Args <span class="keyword">struct</span> &#123;</span><br><span class="line">   Name <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   client, err := net.Dial(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;127.0.0.1:4242&quot;</span>)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;dialing:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">defer</span> client.Close()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> reply <span class="type">string</span></span><br><span class="line">   args := &amp;Args&#123;<span class="string">&quot;World&quot;</span>&#125;</span><br><span class="line">   c := jsonrpc.NewClient(client)</span><br><span class="line">   err = c.Call(<span class="string">&quot;greet&quot;</span>, args, &amp;reply)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;arith error:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line">   fmt.Println(reply)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Golang中作为RPC-Server，Node-js中作为RPC-Client"><a href="#Golang中作为RPC-Server，Node-js中作为RPC-Client" class="headerlink" title="Golang中作为RPC Server，Node.js中作为RPC Client"></a>Golang中作为RPC Server，Node.js中作为RPC Client</h3><h4 id="Golang中作为RPC-Server"><a href="#Golang中作为RPC-Server" class="headerlink" title="Golang中作为RPC Server"></a>Golang中作为RPC Server</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;net&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc&quot;</span></span><br><span class="line">   <span class="string">&quot;log&quot;</span></span><br><span class="line">   <span class="string">&quot;net/rpc/jsonrpc&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> GreetService <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *GreetService)</span></span> Greet(name <span class="type">string</span>, reply *<span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">   *reply = <span class="string">&quot;Hello, &quot;</span> + name</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   greet := <span class="built_in">new</span>(GreetService)</span><br><span class="line">   rpc.Register(greet)</span><br><span class="line">   listener, err := net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:1234&quot;</span>)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       log.Fatal(<span class="string">&quot;listen error:&quot;</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> &#123;</span><br><span class="line">       conn, err := listener.Accept()</span><br><span class="line">       <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">           <span class="keyword">continue</span></span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">go</span> rpc.ServeCodec(jsonrpc.NewServerCodec(conn))</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Node-js中作为RPC-Client"><a href="#Node-js中作为RPC-Client" class="headerlink" title="Node.js中作为RPC Client"></a>Node.js中作为RPC Client</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> zerorpc = <span class="built_in">require</span>(<span class="string">&quot;zerorpc&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> client = <span class="keyword">new</span> zerorpc.<span class="title class_">Client</span>();</span><br><span class="line">client.<span class="title function_">connect</span>(<span class="string">&quot;tcp://127.0.0.1:1234&quot;</span>);</span><br><span class="line"></span><br><span class="line">client.<span class="title function_">invoke</span>(<span class="string">&quot;greet&quot;</span>, <span class="string">&quot;World&quot;</span>, <span class="keyword">function</span> (<span class="params">error, res, more</span>) &#123;</span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(res);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/f2ae2a403256/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ccwwbb">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/12/f2ae2a403256/" class="post-title-link" itemprop="url">js的作用域，以及js为什么需要绑定this</a>
         </h2>
 
         <div class="post-meta-container">
@@ -317,7 +486,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/29f70be0c3d2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/300722230009/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -335,7 +504,262 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/29f70be0c3d2/" class="post-title-link" itemprop="url">Nest"拦截器","验证器","中间件"的区别</a>
+          <a href="/2022/11/300722230009/" class="post-title-link" itemprop="url">最简单的分布式锁：Redis</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-12 14:20:19" itemprop="dateCreated datePublished" datetime="2022-11-12T14:20:19+08:00">2022-11-12</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>微服务架构下，经常会碰到多个API对一个资源的访问，这个时候传统的锁就不管用了，分布式锁就应运而生。<br>在Redis中实现分布式锁通常使用SET命令和DEL命令来实现锁的设置和自动释放</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/go-redis/redis/v8&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建一个Redis客户端实例</span></span><br><span class="line">	client := redis.NewClient(&amp;redis.Options&#123;</span><br><span class="line">		Addr:     <span class="string">&quot;localhost:6379&quot;</span>,</span><br><span class="line">		Password: <span class="string">&quot;&quot;</span>, <span class="comment">// 没有设置密码</span></span><br><span class="line">		DB:       <span class="number">0</span>,  <span class="comment">// 使用默认数据库</span></span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 设置锁的键名</span></span><br><span class="line">	lockKey := <span class="string">&quot;my_lock&quot;</span></span><br><span class="line">	<span class="comment">// 设置锁的过期时间，防止锁无法释放</span></span><br><span class="line">	lockTTL := <span class="number">10</span> * time.Second</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 尝试获取锁</span></span><br><span class="line">	lockAcquired, err := client.SetNX(ctx, lockKey, <span class="string">&quot;locked&quot;</span>, lockTTL).Result()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// 处理错误</span></span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> lockAcquired &#123;</span><br><span class="line">		<span class="comment">// 成功获取锁，执行业务逻辑</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;Lock acquired, running the critical section&quot;</span>)</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 模拟业务执行</span></span><br><span class="line">		time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 释放锁</span></span><br><span class="line">		_, err := client.Del(ctx, lockKey).Result()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="comment">// 处理错误</span></span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(<span class="string">&quot;Lock released&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// 未能获取锁</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;Failed to acquire lock&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码尝试获取一个名为<code>my_lock</code>的锁。我们使用<code>SETNX</code>命令来设置锁，其原子性保证了只有一个客户端能获得锁。锁设置了10秒的过期时间，避免锁无法释放。如果成功获得了锁，则执行一些关键逻辑，最后再使用<code>DEL</code>命令来释放锁。如果未能获得锁，则处理相应逻辑。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/56df050d5428/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ccwwbb">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/10/56df050d5428/" class="post-title-link" itemprop="url">Express的应用和服务分离</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-04 14:20:19" itemprop="dateCreated datePublished" datetime="2022-10-04T14:20:19+08:00">2022-10-04</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在一个 Express 应用中，将应用程序和服务器逻辑分离开来通常是个好主意。具体来说，可以将 Express 应用本身（包括路由、中间件配置等）和服务器逻辑（创建服务器实例、侦听端口等）分开。</p>
+<p>这种分离可以通过以下方法实现：</p>
+<ol>
+<li><p><strong>应用程序</strong>：</p>
+<ul>
+<li>应用程序逻辑可以包括 Express 应用的配置、路由设置、中间件配置等内容。这些逻辑通常保存在主应用文件（例如 <code>app.js</code>）中。应用程序处理请求、调用相应的路由处理程序以及执行其他应用级逻辑。</li>
+</ul>
+</li>
+<li><p><strong>服务器逻辑</strong>：</p>
+<ul>
+<li>服务器逻辑涉及创建 HTTP 服务器实例、指定监听端口等。将这些逻辑放在单独的文件中，通常命名为 <code>server.js</code> 或 <code>www</code> 是一种常见做法。这个文件负责创建服务器实例并将 Express 应用绑定到该服务器上。</li>
+</ul>
+</li>
+<li><p><strong>路由和控制器</strong>：</p>
+<ul>
+<li>将路由逻辑和控制器函数分离到单独的文件或目录中，以保持代码的模块化和可维护性。</li>
+</ul>
+</li>
+<li><p><strong>服务层和模型</strong>：</p>
+<ul>
+<li>对于复杂的应用逻辑和数据操作，考虑将业务逻辑抽象为服务层。服务层负责处理复杂的业务逻辑，并将数据库操作等业务逻辑从控制器中分离出来。</li>
+</ul>
+</li>
+</ol>
+<p>API声明应该在 app.js 文件里面：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var app = express();</span><br><span class="line">app.use(bodyParser.json());</span><br><span class="line">app.use(&quot;/api/events&quot;, events.API);</span><br><span class="line">app.use(&quot;/api/forms&quot;, forms);</span><br></pre></td></tr></table></figure>
+
+
+<p>服务器网络声明，应该在 &#x2F;bin&#x2F;www 文件里面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Get port from environment and store in Express.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">var port = normalizePort(process.env.PORT || &#x27;3000&#x27;);</span><br><span class="line">app.set(&#x27;port&#x27;, port);</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Create HTTP server.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">var server = http.createServer(app);</span><br></pre></td></tr></table></figure>
+
+<p>使用超快的流行的测试包在线测试你的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">const app = express();</span><br><span class="line"></span><br><span class="line">app.get(&#x27;/user&#x27;, function(req, res) &#123;</span><br><span class="line">  res.status(200).json(&#123; name: &#x27;tobi&#x27; &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">request(app)</span><br><span class="line">  .get(&#x27;/user&#x27;)</span><br><span class="line">  .expect(&#x27;Content-Type&#x27;, /json/)</span><br><span class="line">  .expect(&#x27;Content-Length&#x27;, &#x27;15&#x27;)</span><br><span class="line">  .expect(200)</span><br><span class="line">  .end(function(err, res) &#123;</span><br><span class="line">    if (err) throw err;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/b2e5d1d4883a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ccwwbb">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/b2e5d1d4883a/" class="post-title-link" itemprop="url">Golang多协程同步的三种方法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-21 22:12:03" itemprop="dateCreated datePublished" datetime="2022-08-21T22:12:03+08:00">2022-08-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在Golang中，可以使用以下三种常见方法来实现多协程的同步：</p>
+<ol>
+<li><strong>使用 WaitGroup</strong>:<br>使用 sync 包中的 WaitGroup 类型可以方便地实现对多个协程的同步管理。使用 Add 方法增加待等待的协程数量，使用 Done 方法标记协程执行完毕，最后调用 Wait 方法来等待所有协程执行完毕。示例如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;sync&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">            <span class="keyword">defer</span> wg.Done()</span><br><span class="line">            fmt.Println(<span class="string">&quot;Goroutine&quot;</span>, i, <span class="string">&quot;done&quot;</span>)</span><br><span class="line">        &#125;(i)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">    fmt.Println(<span class="string">&quot;All goroutines done&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>使用通道（Channel）</strong>:<br>通过通道可以在协程之间进行通信和同步。通过在通道上进行读写操作，可以控制协程的执行顺序。示例如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(done <span class="keyword">chan</span> <span class="type">bool</span>)</span></span> &#123;</span><br><span class="line">    fmt.Print(<span class="string">&quot;Working...&quot;</span>)</span><br><span class="line">    <span class="comment">// 模拟工作</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;Done&quot;</span>)</span><br><span class="line">    done &lt;- <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">bool</span>)</span><br><span class="line">    <span class="keyword">go</span> worker(done)</span><br><span class="line">    &lt;-done <span class="comment">// 阻塞直到接收到协程的完成通知</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;All done&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>使用 Mutex（互斥锁）</strong>:<br>通过 sync 包中的 Mutex 类型可以实现对共享资源的安全访问，从而保证多个协程之间的同步。示例如下：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    counter = <span class="number">0</span></span><br><span class="line">    lock    sync.Mutex</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">increment</span><span class="params">(wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">    lock.Lock()</span><br><span class="line">    <span class="keyword">defer</span> lock.Unlock()</span><br><span class="line">    counter++</span><br><span class="line">    wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> increment(&amp;wg)</span><br><span class="line">    &#125;</span><br><span class="line">    wg.Wait()</span><br><span class="line">    fmt.Println(<span class="string">&quot;Counter:&quot;</span>, counter)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/06/29f70be0c3d2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ccwwbb">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | ccwwbb">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/29f70be0c3d2/" class="post-title-link" itemprop="url">Nest"拦截器","验证器","中间件"的区别</a>
         </h2>
 
         <div class="post-meta-container">
@@ -412,7 +836,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/bcd2f1b074f4/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/bcd2f1b074f4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -430,7 +854,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/bcd2f1b074f4/" class="post-title-link" itemprop="url">什么是接口的幂等性和可重入？</a>
+          <a href="/2022/05/bcd2f1b074f4/" class="post-title-link" itemprop="url">什么是接口的幂等性和可重入？</a>
         </h2>
 
         <div class="post-meta-container">
@@ -504,7 +928,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/fcdd2c3b9807/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/fcdd2c3b9807/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -522,7 +946,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/fcdd2c3b9807/" class="post-title-link" itemprop="url">Ts高级功能"装饰器"</a>
+          <a href="/2022/04/fcdd2c3b9807/" class="post-title-link" itemprop="url">Ts高级功能"装饰器"</a>
         </h2>
 
         <div class="post-meta-container">
@@ -577,343 +1001,9 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/90926066c1e8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ccwwbb">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/90926066c1e8/" class="post-title-link" itemprop="url">面向对象和面向过程的区别？</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-12-02 19:00:49" itemprop="dateCreated datePublished" datetime="2021-12-02T19:00:49+08:00">2021-12-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-02 19:00:49" itemprop="dateModified" datetime="2022-03-02T19:00:49+08:00">2022-03-02</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>面向对象编程（OOP）和面向过程编程（Procedural Programming）是两种不同的编程思想和范式。</p>
-<h3 id="面向对象编程（OOP）"><a href="#面向对象编程（OOP）" class="headerlink" title="面向对象编程（OOP）"></a>面向对象编程（OOP）</h3><ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li>将程序看作一组相互作用的对象，对象拥有属性（数据）和方法（行为）。</li>
-<li>通过封装、继承和多态等概念来组织代码和数据，以提高可维护性和可重用性。</li>
-</ul>
-</li>
-<li><p><strong>示例代码</strong>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于面向对象编程思想的JavaScript示例</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">makeSound</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Animal sound&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Animal</span> &#123;</span><br><span class="line">  <span class="title function_">makeSound</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Woof!&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myDog = <span class="keyword">new</span> <span class="title class_">Dog</span>(<span class="string">&#x27;Buddy&#x27;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(myDog.<span class="property">name</span>); <span class="comment">// 输出: Buddy</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(myDog.<span class="title function_">makeSound</span>()); <span class="comment">// 输出: Woof!</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="面向过程编程"><a href="#面向过程编程" class="headerlink" title="面向过程编程"></a>面向过程编程</h3><ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li>以一系列的步骤（过程）来解决问题，重点放在算法和函数上。</li>
-<li>程序主要由函数构成，函数接受输入并产生输出。</li>
-</ul>
-</li>
-<li><p><strong>示例代码</strong>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于面向过程编程思想的JavaScript示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateArea</span>(<span class="params">radius</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="property">PI</span> * radius * radius;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> circleArea = <span class="title function_">calculateArea</span>(<span class="number">5</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(circleArea); <span class="comment">// 输出: 78.53981633974483</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="主要区别"><a href="#主要区别" class="headerlink" title="主要区别"></a>主要区别</h3><ol>
-<li><p><strong>思想</strong>：</p>
-<ul>
-<li>面向对象编程强调对象的概念，数据和操作数据的方法被封装到对象中。</li>
-<li>面向过程编程关注解决问题的步骤和流程，以函数为主。</li>
-</ul>
-</li>
-<li><p><strong>抽象</strong>：</p>
-<ul>
-<li>面向对象编程使用类和对象来建模，支持封装、继承和多态等特性。</li>
-<li>面向过程编程通常以线性的步骤来解决问题，没有对象和类的概念。</li>
-</ul>
-</li>
-<li><p><strong>复用性</strong>：</p>
-<ul>
-<li>面向对象编程支持更好的代码复用性，因为可以通过继承和组合来重用代码。</li>
-<li>面向过程编程通常缺乏结构化的代码复用机制。</li>
-</ul>
-</li>
-</ol>
-<p>总而言之，在实际项目中，可以根据具体需求和问题的特性来选择合适的编程范式。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/3a05595cbf71/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ccwwbb">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/3a05595cbf71/" class="post-title-link" itemprop="url">函数式和响应式的区别？</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-11-08 20:10:19" itemprop="dateCreated datePublished" datetime="2021-11-08T20:10:19+08:00">2021-11-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-07 20:10:19" itemprop="dateModified" datetime="2022-03-07T20:10:19+08:00">2022-03-07</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>函数式编程和响应式编程是两种不同的编程范式，它们有着不同的思维方式和实践方法。</p>
-<h3 id="函数式编程（Functional-Programming）"><a href="#函数式编程（Functional-Programming）" class="headerlink" title="函数式编程（Functional Programming）"></a>函数式编程（Functional Programming）</h3><ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li>强调函数的纯粹性和不可变性，鼓励使用纯函数（Pure Function）来处理数据。</li>
-<li>注重数据转换和数据处理流程，倡导避免共享状态和可变数据，更多地依赖函数的组合和管道操作。</li>
-</ul>
-</li>
-<li><p><strong>示例代码</strong>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用函数式编程思想对数组进行处理</span></span><br><span class="line"><span class="keyword">const</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用map函数对数组进行映射转换</span></span><br><span class="line"><span class="keyword">const</span> squaredNumbers = numbers.<span class="title function_">map</span>(<span class="function"><span class="params">num</span> =&gt;</span> num * num);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(squaredNumbers); <span class="comment">// 输出: [1, 4, 9, 16, 25]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用reduce函数对数组进行累加求和</span></span><br><span class="line"><span class="keyword">const</span> sum = numbers.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, current</span>) =&gt;</span> acc + current, <span class="number">0</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(sum); <span class="comment">// 输出: 15</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="响应式编程（Reactive-Programming）"><a href="#响应式编程（Reactive-Programming）" class="headerlink" title="响应式编程（Reactive Programming）"></a>响应式编程（Reactive Programming）</h3><ul>
-<li><p><strong>特点</strong>：</p>
-<ul>
-<li>响应式编程关注数据流和数据变化，通过订阅和监听数据流的改变来实现反应性。</li>
-<li>常用的库如RxJS提供了Observables等工具来处理数据流，使得程序可以高效地响应数据的变化。</li>
-</ul>
-</li>
-<li><p><strong>示例代码</strong>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用RxJS进行数据流处理</span></span><br><span class="line"><span class="keyword">const</span> &#123; <span class="keyword">from</span> &#125; = rxjs;</span><br><span class="line"><span class="keyword">const</span> &#123; filter, map &#125; = rxjs.<span class="property">operators</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> source = <span class="title function_">from</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Operators进行数据流处理</span></span><br><span class="line">source.<span class="title function_">pipe</span>(</span><br><span class="line">  <span class="title function_">filter</span>(<span class="function"><span class="params">num</span> =&gt;</span> num % <span class="number">2</span> === <span class="number">0</span>), <span class="comment">// 过滤偶数</span></span><br><span class="line">  <span class="title function_">map</span>(<span class="function"><span class="params">num</span> =&gt;</span> num * num) <span class="comment">// 对每个数求平方</span></span><br><span class="line">).<span class="title function_">subscribe</span>(<span class="function"><span class="params">result</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(result)); <span class="comment">// 输出: 4, 16</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="主要区别"><a href="#主要区别" class="headerlink" title="主要区别"></a>主要区别</h3><ol>
-<li><p><strong>思想</strong>：</p>
-<ul>
-<li>函数式编程侧重于数据转换和函数式组合，强调纯函数和不可变数据。</li>
-<li>响应式编程侧重于数据流和数据的响应性，通过数据流的订阅和反应实现反应性。</li>
-</ul>
-</li>
-<li><p><strong>重点</strong>：</p>
-<ul>
-<li>函数式编程着眼于数据和代码的转换处理，提倡函数的纯粹性和不可变性。</li>
-<li>响应式编程更注重数据的流动和变化，以及对数据流的监听和处理。</li>
-</ul>
-</li>
-<li><p><strong>工具</strong>：</p>
-<ul>
-<li>函数式编程可以利用函数式编程库（如Lodash、Ramda）来进行函数的组合和处理。</li>
-<li>响应式编程常使用响应式编程库（如RxJS）来处理数据的流动和变化。</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/05b038ec9e98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ccwwbb">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | ccwwbb">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/05b038ec9e98/" class="post-title-link" itemprop="url">读《代码整洁之道》学编程小技巧</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-02 23:10:03" itemprop="dateCreated datePublished" datetime="2021-07-02T23:10:03+08:00">2021-07-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-10-02 09:20:10" itemprop="dateModified" datetime="2021-10-02T09:20:10+08:00">2021-10-02</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>常见的代码整洁技巧：</p>
-<ol>
-<li><p><strong>命名规范</strong>：使用清晰、具有描述性的变量名、函数名和类名。避免缩写和模棱两可的命名。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好的命名示例</span></span><br><span class="line"><span class="keyword">const</span> d = <span class="number">5</span>; <span class="comment">// 避免使用单个字母的变量名</span></span><br><span class="line"><span class="keyword">const</span> f = <span class="keyword">function</span>(<span class="params"></span>) &#123;&#125;; <span class="comment">// 避免使用过于简单或者难以理解的函数名</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 好的命名示例</span></span><br><span class="line"><span class="keyword">const</span> daysInWeek = <span class="number">7</span>; <span class="comment">// 使用具有描述性的变量名</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateAreaOfSquare</span>(<span class="params">length</span>) &#123;&#125; <span class="comment">// 使用描述性的函数名</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>减少函数的参数个数</strong>：尽量避免过多的函数参数，可以考虑将相关参数封装到对象中。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 过多的参数示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">createPerson</span>(<span class="params">name, age, gender, jobTitle, address</span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用对象参数示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">createPerson</span>(<span class="params">personInfo</span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>避免过长的函数和类</strong>：尽量保持函数和类的简洁性和可读性。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 过长的函数示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">longFunctionWithManyTasks</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拆分为多个简洁函数示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">doTask1</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">doTask2</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>避免深层嵌套</strong>：减少代码的嵌套层级，可以通过提前返回或提取出辅助函数来简化逻辑。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 深层嵌套的示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">complexLogic</span>(<span class="params">a, b, c</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (a) &#123;</span><br><span class="line">        <span class="keyword">if</span> (b) &#123;</span><br><span class="line">            <span class="keyword">if</span> (c) &#123;</span><br><span class="line">                <span class="comment">// ...</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 减少嵌套的示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">complexLogic</span>(<span class="params">a, b, c</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!a) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!b) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!c) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>代码注释</strong>：使用有意义的注释来解释复杂的逻辑或者提供上下文信息，避免无谓的注释或者注释中包含的与代码本身相悖的信息。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好的注释示例</span></span><br><span class="line"><span class="keyword">let</span> total = <span class="number">0</span>; <span class="comment">// 设置总数为0</span></span><br><span class="line"><span class="comment">// 迭代数组</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arr.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    total += arr[i]; <span class="comment">// 增加到总数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 好的注释示例</span></span><br><span class="line"><span class="keyword">let</span> total = <span class="number">0</span>; <span class="comment">// 初始化总数</span></span><br><span class="line"><span class="comment">// 计算数组元素的总和</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arr.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    total += arr[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>单一职责原则</strong>：确保每个函数、类或模块只负责一项功能或任务，避免功能耦合。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不符合单一职责原则的示例</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">createUser</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">sendEmail</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 符合单一职责原则的示例</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">createUser</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmailService</span> &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">sendEmail</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>DRY 原则</strong>：避免重复代码。如果发现代码中存在相似的逻辑，可以考虑将其提取成函数、方法或类。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 重复代码的示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateRectangleArea</span>(<span class="params">width, height</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> width * height;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateSquareArea</span>(<span class="params">sideLength</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> sideLength * sideLength;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遵循DRY原则的示例</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateArea</span>(<span class="params">width, height</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> width * height;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>单元测试</strong>：编写单元测试来确保代码的正确性。编写可测试的代码也是代码整洁的一部分。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 已编写的单元测试示例</span></span><br><span class="line"><span class="title function_">test</span>(<span class="string">&#x27;calculateArea function should return the correct area&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">expect</span>(<span class="title function_">calculateArea</span>(<span class="number">3</span>, <span class="number">4</span>)).<span class="title function_">toBe</span>(<span class="number">12</span>);</span><br><span class="line">    <span class="title function_">expect</span>(<span class="title function_">calculateArea</span>(<span class="number">5</span>, <span class="number">5</span>)).<span class="title function_">toBe</span>(<span class="number">25</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>拆分长表达式</strong>：避免写过长的表达式，可以拆分成多个命名的中间变量来提高可读性。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 过长的表达式示例</span></span><br><span class="line"><span class="keyword">const</span> result = (a * b + c) / (d - e) + (f * g);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 拆分成中间变量的示例</span></span><br><span class="line"><span class="keyword">const</span> part1 = a * b + c;</span><br><span class="line"><span class="keyword">const</span> part2 = d - e;</span><br><span class="line"><span class="keyword">const</span> part3 = f * g;</span><br><span class="line"><span class="keyword">const</span> result = (part1 / part2) + part3;</span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
 
 </div>
   </main>
